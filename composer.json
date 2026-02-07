@@ -1,7 +1,7 @@
 {
-    "name": "systemeio/test-task-template",
+    "name": "hrombel/systemeio-backend-challenge",
     "type": "project",
-    "description": "A bare bones Symfony app template with Docker support",
+    "description": "Test challenge for systeme.io",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -66,5 +66,9 @@
             "allow-contrib": false,
             "require": "6.4.*"
         }
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.93",
+        "php-cs-fixer/shim": "^3.9"
     }
 }
