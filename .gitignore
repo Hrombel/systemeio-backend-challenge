@@ -1,6 +1,7 @@
 /.idea
 .env.*.local
 compose.override.yaml
+/mounts/
 
 ###> symfony/framework-bundle ###
 /.env.local
