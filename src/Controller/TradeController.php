@@ -3,10 +3,12 @@
 use App\Controller\TradeController\DTO\CalculatePriceRequestDto;
 use App\Controller\TradeController\DTO\PurchaseRequestDto;
 use App\Service\Payment\Gateway;
+use App\Service\Trade\Exception\TradeException;
 use App\Service\Trade\Trade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class TradeController extends AbstractController {
@@ -15,7 +17,13 @@ final class TradeController extends AbstractController {
         #[MapRequestPayload] CalculatePriceRequestDto $data,
         Trade $trade
     ): JsonResponse {
-        $totalPrice = $trade->calculatePrice($data->product, $data->taxNumber, $data->couponCode);
+        
+        try {
+            $totalPrice = $trade->calculatePrice($data->product, $data->taxNumber, $data->couponCode);
+        }
+        catch(TradeException $e) {
+            throw new BadRequestHttpException($e->getMessage(), $e);
+        }
 
         return $this->json([
             'totalPrice' => $totalPrice,
@@ -29,7 +37,12 @@ final class TradeController extends AbstractController {
         Gateway $paymentGateway
     ): JsonResponse {
 
-        $totalPrice = $trade->calculatePrice($data->product, $data->taxNumber, $data->couponCode);
+        try {
+            $totalPrice = $trade->calculatePrice($data->product, $data->taxNumber, $data->couponCode);
+        }
+        catch(TradeException $e) {
+            throw new BadRequestHttpException($e->getMessage(), $e);
+        }
 
         $processor = $paymentGateway->getPaymentSystem($data->paymentProcessor);
         $processor->process($totalPrice);
