@@ -1,5 +1,6 @@
 <?php namespace App\Controller\TradeController\DTO;
 
+use App\Validator\TaxNumber;
 use Symfony\Component\Validator\Constraints as Assert;
 
 trait ProductDealTrait {
@@ -8,7 +9,7 @@ trait ProductDealTrait {
     public readonly int $product;
 
     #[Assert\NotBlank]
-    #[Assert\Length(min: 1)]
+    #[TaxNumber]
     public readonly string $taxNumber;
 
     #[Assert\Length(min: 1)]

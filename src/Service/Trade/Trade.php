@@ -18,6 +18,23 @@ class Trade {
     ) {
     }
 
+    /** 
+     * TODO: add caching of returned array
+     * @return string[] 
+     * */
+    public function getTaxRules(): array {
+        $taxFQN = TaxEntity::class;
+
+        $rules = $this->em->createQuery(
+           "SELECT t.rule
+            FROM $taxFQN t
+        ")
+            ->getSingleColumnResult()
+        ;
+
+        return $rules;
+    }
+
     public function calculatePrice(int $productId, string $taxNumber, string $couponCode): string {
         $productFQN = ProductEntity::class;
         $taxFQN = TaxEntity::class;
