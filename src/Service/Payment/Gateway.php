@@ -20,4 +20,20 @@ class Gateway {
             throw new NotFoundException('Payment system not found');
         }
     }
+
+    /**
+     * TODO: add a caching method
+     */
+    public function getPaySystemTypes(): array {
+
+        $types = [];
+        $items = $this->locator->getProvidedServices();
+        foreach($items as $id => $_) {
+            /** @var PaymentSystemInterface $ps */
+            $ps = $this->locator->get($id);
+            $types[] = $ps->getType();
+        }
+
+        return $types;
+    }
 }

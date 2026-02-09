@@ -1,12 +1,13 @@
 <?php namespace App\Controller\TradeController\DTO;
 
+use App\Validator\PayProcessor;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class PurchaseRequestDto {
     use ProductDealTrait;
 
     #[Assert\NotBlank]
-    #[Assert\Length(min: 1)]
+    #[PayProcessor]
     public readonly string $paymentProcessor;
 
     public function __construct(
