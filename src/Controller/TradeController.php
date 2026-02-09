@@ -8,6 +8,7 @@ use App\Entity\Tax;
 use App\Exception\NotImplementedException;
 use App\Exception\ProductNotFoundTradeException;
 use App\Exception\UnrecognizedTaxTradeException;
+use App\Service\Payment\Gateway;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,28 @@ final class TradeController extends AbstractController {
     public function calculatePrice(Request $req, EntityManagerInterface $em): JsonResponse {
         $data = $req->toArray();
 
+        $totalPrice = $this->_calculatePrice($data['product'], $data['taxNumber'], $data['couponCode'], $em);
+
+        return $this->json([
+            'totalPrice' => $totalPrice,
+        ]);
+    }
+
+    #[Route('/purchase', name: 'app_trade_purchase', methods: 'POST')]
+    public function purchase(Request $req, EntityManagerInterface $em, Gateway $paymentGateway): JsonResponse {
+        $data = $req->toArray();
+
+        $totalPrice = $this->_calculatePrice($data['product'], $data['taxNumber'], $data['couponCode'], $em);
+
+        $processor = $paymentGateway->getPaymentSystem($data['paymentProcessor']);
+        $processor->process(number_format($totalPrice, 2, '.'));
+
+        return $this->json([
+            'message' => 'OK',
+        ]);
+    }
+
+    private function _calculatePrice(int $productId, string $taxNumber, string $couponCode, EntityManagerInterface $em): float {
         $productFQN = Product::class;
         $taxFQN = Tax::class;
         $discountCouponFQN = DiscountCoupon::class;
@@ -40,9 +63,9 @@ final class TradeController extends AbstractController {
                     p.id = :productId AND p.price IS NOT NULL
             ")
                 ->setParameters([
-                    'productId' => $data['product'],
-                    'taxNumber' => $data['taxNumber'],
-                    'couponCode' => $data['couponCode'],
+                    'productId' => $productId,
+                    'taxNumber' => $taxNumber,
+                    'couponCode' => $couponCode,
                 ])
                 ->getSingleResult()
             ;
@@ -70,8 +93,6 @@ final class TradeController extends AbstractController {
 
         $price += $taxValue;
 
-        return $this->json([
-            'totalPrice' => $price,
-        ]);
+        return $price;
     }
 }

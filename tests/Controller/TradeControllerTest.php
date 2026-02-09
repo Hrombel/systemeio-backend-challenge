@@ -16,4 +16,19 @@ class TradeControllerTest extends WebTestCase {
 
         $this->assertResponseIsSuccessful();
     }
+
+    public function testPurchase(): void {
+        $client = static::createClient();
+        $crawler = $client->request(
+            'POST', '/purchase',
+            content: json_encode([
+                'product' => 1,
+                'taxNumber' => 'DE123456789',
+                'couponCode' => 'P10',
+                'paymentProcessor' => 'paypal',
+            ])
+        );
+
+        $this->assertResponseIsSuccessful();
+    }
 }

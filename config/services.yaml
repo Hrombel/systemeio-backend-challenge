@@ -19,7 +19,15 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-            - '../src/Exception'
+            - '../src/**/Contract/'
+            - '../src/**/Exception/'
+
+    # Payment systems:
+    App\Service\Payment\System\:
+        resource: '../src/Service/Payment/System/*'
+        tags: [ 'app.paysystem' ]
+        exclude:
+            - '../src/Service/Payment/System/Yandexpay.php' # This way we disable payment systems
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
