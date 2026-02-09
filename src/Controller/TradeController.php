@@ -15,13 +15,11 @@ final class TradeController extends AbstractController {
     #[Route('/calculate-price', name: 'app_trade_calculate_price', methods: 'POST')]
     public function calculatePrice(
         #[MapRequestPayload] CalculatePriceRequestDto $data,
-        Trade $trade
+        Trade $trade,
     ): JsonResponse {
-        
         try {
             $totalPrice = $trade->calculatePrice($data->product, $data->taxNumber, $data->couponCode);
-        }
-        catch(TradeException $e) {
+        } catch (TradeException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
@@ -33,14 +31,12 @@ final class TradeController extends AbstractController {
     #[Route('/purchase', name: 'app_trade_purchase', methods: 'POST')]
     public function purchase(
         #[MapRequestPayload] PurchaseRequestDto $data,
-        Trade $trade, 
-        Gateway $paymentGateway
+        Trade $trade,
+        Gateway $paymentGateway,
     ): JsonResponse {
-
         try {
             $totalPrice = $trade->calculatePrice($data->product, $data->taxNumber, $data->couponCode);
-        }
-        catch(TradeException $e) {
+        } catch (TradeException $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 

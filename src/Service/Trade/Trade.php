@@ -6,27 +6,28 @@ use App\Entity\PercentDiscountCoupon as PercentDiscountCouponEntity;
 use App\Entity\Product as ProductEntity;
 use App\Entity\Tax as TaxEntity;
 use App\Exception\NotImplementedException;
+use App\Service\Trade\Exception\InvalidCouponTradeException;
 use App\Service\Trade\Exception\ProductNotFoundTradeException;
 use App\Service\Trade\Exception\UnrecognizedTaxTradeException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NoResultException;
 
 class Trade {
-
     public function __construct(
         private readonly EntityManagerInterface $em,
     ) {
     }
 
-    /** 
-     * TODO: add caching of returned array
-     * @return string[] 
+    /**
+     * TODO: add caching of returned array.
+     *
+     * @return string[]
      * */
     public function getTaxRules(): array {
         $taxFQN = TaxEntity::class;
 
         $rules = $this->em->createQuery(
-           "SELECT t.rule
+            "SELECT t.rule
             FROM $taxFQN t
         ")
             ->getSingleColumnResult()
@@ -35,7 +36,7 @@ class Trade {
         return $rules;
     }
 
-    public function calculatePrice(int $productId, string $taxNumber, string $couponCode): string {
+    public function calculatePrice(int $productId, string $taxNumber, ?string $couponCode = null): string {
         $productFQN = ProductEntity::class;
         $taxFQN = TaxEntity::class;
         $discountCouponFQN = DiscountCouponEntity::class;
@@ -51,7 +52,7 @@ class Trade {
                 LEFT JOIN
                     $taxFQN t WITH SIMILAR_TO(:taxNumber, t.rule) = TRUE
                 LEFT JOIN
-                    $discountCouponFQN c WITH c.sellerId = p.sellerId AND c.code = :couponCode
+                    $discountCouponFQN c WITH c.sellerId = p.sellerId AND c.code = :couponCode AND c.validUntil > CURRENT_TIMESTAMP()
                 WHERE
                     p.id = :productId AND p.price IS NOT NULL
             ")
@@ -74,21 +75,46 @@ class Trade {
             throw new UnrecognizedTaxTradeException('Invalid or unrecognized tax number given');
         }
 
-        if (null !== $coupon && !in_array(get_class($coupon), [FixedDiscountCouponEntity::class, PercentDiscountCouponEntity::class])) {
+        if (null !== $couponCode && null === $coupon) {
+            throw new InvalidCouponTradeException('Specified coupon not found');
+        }
+
+        if (null !== $couponCode && !in_array(get_class($coupon), [FixedDiscountCouponEntity::class, PercentDiscountCouponEntity::class])) {
             throw new NotImplementedException('Unrecognized coupon type found');
         }
 
         if ($coupon instanceof FixedDiscountCouponEntity) {
-            $price = bcsub($price, $coupon->getExactValue(), 2);
+            $couponArgs = [$coupon->getExactValue()];
         } elseif ($coupon instanceof PercentDiscountCouponEntity) {
-            $price = bcmul($price, (string)((100 - $coupon->getPercentValue()) / 100), 2);
+            $couponArgs = [null, $coupon->getPercentValue()];
+        } else {
+            $couponArgs = [];
         }
 
-        $taxValue = bcmul($price, (string)($taxValuePercent / 100), 2);
+        $totalPrice = $this->calculateTotalItemPrice(
+            $price,
+            $taxValuePercent,
+            ...$couponArgs,
+        );
 
-        $price = bcadd($price, $taxValue, 2);
-
-        return $price;
+        return $totalPrice;
     }
 
+    public function calculateTotalItemPrice(
+        string $itemPrice, int $taxValuePercent, ?string $couponExactValue = null, ?int $couponPercentValue = null,
+    ): string {
+        $totalPrice = $itemPrice;
+
+        if ($couponExactValue) {
+            $totalPrice = bcsub($itemPrice, $couponExactValue, 2);
+        } elseif ($couponPercentValue) {
+            $totalPrice = bcmul($itemPrice, (string) ((100 - $couponPercentValue) / 100), 2);
+        }
+
+        $taxValue = bcmul($totalPrice, (string) ($taxValuePercent / 100), 2);
+
+        $totalPrice = bcadd($totalPrice, $taxValue, 2);
+
+        return $totalPrice;
+    }
 }
