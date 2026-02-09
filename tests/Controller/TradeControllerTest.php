@@ -7,6 +7,10 @@ class TradeControllerTest extends WebTestCase {
         $client = static::createClient();
         $crawler = $client->request(
             'POST', '/calculate-price',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_ACCEPT'  => 'application/json',
+            ],
             content: json_encode([
                 'product' => 1,
                 'taxNumber' => 'DE123456789',
@@ -20,7 +24,12 @@ class TradeControllerTest extends WebTestCase {
     public function testPurchase(): void {
         $client = static::createClient();
         $crawler = $client->request(
-            'POST', '/purchase',
+            'POST', 
+            '/purchase',
+            server: [
+                'CONTENT_TYPE' => 'application/json',
+                'HTTP_ACCEPT'  => 'application/json',
+            ],
             content: json_encode([
                 'product' => 1,
                 'taxNumber' => 'DE123456789',

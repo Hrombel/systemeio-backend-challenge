@@ -21,6 +21,7 @@ services:
             - '../src/Kernel.php'
             - '../src/**/Contract/'
             - '../src/**/Exception/'
+            - '../src/**/DTO/'
 
     # Payment systems:
     App\Service\Payment\System\:
