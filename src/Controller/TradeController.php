@@ -26,7 +26,7 @@ final class TradeController extends AbstractController {
         $totalPrice = $trade->calculatePrice($data['product'], $data['taxNumber'], $data['couponCode']);
 
         $processor = $paymentGateway->getPaymentSystem($data['paymentProcessor']);
-        $processor->process(number_format($totalPrice, 2, '.'));
+        $processor->process($totalPrice);
 
         return $this->json([
             'message' => 'OK',

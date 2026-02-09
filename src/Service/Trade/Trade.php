@@ -18,7 +18,7 @@ class Trade {
     ) {
     }
 
-    public function calculatePrice(int $productId, string $taxNumber, string $couponCode): float {
+    public function calculatePrice(int $productId, string $taxNumber, string $couponCode): string {
         $productFQN = ProductEntity::class;
         $taxFQN = TaxEntity::class;
         $discountCouponFQN = DiscountCouponEntity::class;
@@ -71,7 +71,7 @@ class Trade {
 
         $price = bcadd($price, $taxValue, 2);
 
-        return (float)$price;
+        return $price;
     }
 
 }
