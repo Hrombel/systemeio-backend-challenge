@@ -1,4 +1,4 @@
-<?php namespace App\Exception;
+<?php namespace App\Service\Payment\Exception;
 
 class Exception extends \Exception {
     public function __construct(string $message = '', int $code = 0, ?\Throwable $previous = null) {
