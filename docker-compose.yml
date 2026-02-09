@@ -9,8 +9,8 @@ services:
           - "8337:8337"
       volumes:
           - .:/app:rw
-      environment:
-          - APP_ENV=dev
+      # environment:
+      #     - APP_ENV=dev # overrides test environment so we do not need it here
   database:
     image: postgres:16-alpine
     environment:
