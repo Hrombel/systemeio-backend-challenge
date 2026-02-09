@@ -22,3 +22,8 @@ compose.override.yaml
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< php-cs-fixer/shim ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
