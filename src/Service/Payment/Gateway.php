@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class Gateway {
+
+    private ?array $fqnByType = null;
+
     public function __construct(
         #[TaggedLocator('app.paysystem')]
         private readonly ServiceLocator $locator,
@@ -15,25 +18,30 @@ class Gateway {
 
     public function getPaymentSystem(string $type): PaymentSystemInterface {
         try {
-            return $this->locator->get(__NAMESPACE__.'\\System\\'.ucfirst($type));
+            return $this->locator->get($this->byType()[$type] ?? '');
         } catch (NotFoundExceptionInterface) {
             throw new NotFoundException('Payment system not found');
         }
     }
 
+    public function getPaySystemTypes(): array {
+        return array_keys($this->byType());
+    }
+
     /**
      * TODO: add a caching method
      */
-    public function getPaySystemTypes(): array {
-
-        $types = [];
-        $items = $this->locator->getProvidedServices();
-        foreach($items as $id => $_) {
-            /** @var PaymentSystemInterface $ps */
-            $ps = $this->locator->get($id);
-            $types[] = $ps->getType();
+    private function byType(): array {
+        if($this->fqnByType === null) {
+            $this->fqnByType = [];
+            $items = $this->locator->getProvidedServices();
+            foreach($items as $id => $fqn) {
+                /** @var PaymentSystemInterface $ps */
+                $ps = $this->locator->get($id);
+                $this->fqnByType[$ps->getType()] = $fqn;
+            }
         }
 
-        return $types;
+        return $this->fqnByType;
     }
 }
