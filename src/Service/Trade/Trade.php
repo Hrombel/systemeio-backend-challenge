@@ -27,7 +27,7 @@ class Trade {
             $foundItem = $this->em->createQuery(
                 "SELECT
                     p.price productPrice, 
-                    t.percentValue taxValue,
+                    t.percentValue taxValuePercent,
                     c
                 FROM
                     $productFQN p
@@ -49,11 +49,11 @@ class Trade {
             throw new ProductNotFoundTradeException('Product not found by productId given');
         }
 
-        $price = (float) $foundItem['productPrice'];
-        $taxValue = $foundItem['taxValue'] ?? null;
+        $price = $foundItem['productPrice'];
+        $taxValuePercent = $foundItem['taxValuePercent'] ?? null;
         $coupon = $foundItem[0];
 
-        if (!$taxValue) {
+        if (!$taxValuePercent) {
             throw new UnrecognizedTaxTradeException('Invalid or unrecognized tax number given');
         }
 
@@ -62,14 +62,16 @@ class Trade {
         }
 
         if ($coupon instanceof FixedDiscountCouponEntity) {
-            $price -= $coupon->getExactValue();
+            $price = bcsub($price, $coupon->getExactValue(), 2);
         } elseif ($coupon instanceof PercentDiscountCouponEntity) {
-            $price *= (100 - $coupon->getPercentValue()) / 100;
+            $price = bcmul($price, (string)((100 - $coupon->getPercentValue()) / 100), 2);
         }
 
-        $price += $taxValue;
+        $taxValue = bcmul($price, (string)($taxValuePercent / 100), 2);
 
-        return $price;
+        $price = bcadd($price, $taxValue, 2);
+
+        return (float)$price;
     }
 
 }
