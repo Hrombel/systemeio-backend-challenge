@@ -9,7 +9,7 @@ final class CouponCode extends Constraint {
     // You can use #[HasNamedArguments] to make some constraint options required.
     // All configurable options must be passed to the constructor.
     public function __construct(
-        public string $mode = 'strict',
+        public readonly string $productField,
         ?array $groups = null,
         mixed $payload = null,
     ) {

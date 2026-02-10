@@ -13,7 +13,7 @@ trait ProductDealTrait {
     #[TaxNumber]
     public readonly string $taxNumber;
 
-    #[CouponCode]
+    #[CouponCode(productField: 'product')]
     #[Assert\Length(min: 1)]
     public readonly ?string $couponCode;
 }
