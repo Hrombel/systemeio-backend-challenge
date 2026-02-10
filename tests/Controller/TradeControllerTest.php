@@ -13,6 +13,7 @@ class TradeControllerTest extends WebTestCase {
             // invalid
             [1, 'DE1234567890', 'P10',  422],
             [1, 'DE123456789',  'P123', 422],
+            [9999, 'DE123456789',  'P123', 422],
         ];
     }
 

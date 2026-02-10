@@ -30,6 +30,9 @@ final class CouponCodeValidator extends ConstraintValidator {
         
         /** @var ProductEntity $product */
         $product = $this->em->find(ProductEntity::class, $productId);
+        if(!$product) {
+            return; // Silently exit because that field should be checked in another validator
+        }
 
         $sellerId = $product->getSellerId();
 
