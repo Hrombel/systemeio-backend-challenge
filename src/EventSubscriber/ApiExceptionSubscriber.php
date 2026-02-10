@@ -27,36 +27,32 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         /** @var ValidationFailedException|null $validatorException */
         $isProd = 'prod' === $this->kernel->getEnvironment();
 
+        $errors = null;
+
         if ($statusCode >= 500 && $isProd) {
             $message = 'Internal server error';
-        } elseif ($validatorException) {
-            // TODO: Make errors presented in real response array structure
-            $message = implode(
-                "\n",
-                array_map(
-                    static fn ($v) => sprintf(
-                        '%s: %s',
-                        $v->getPropertyPath(),
-                        $v->getMessage()
-                    ),
-                    iterator_to_array($validatorException->getViolations())
-                )
-            );
         } else {
             $message = $exception->getMessage();
+
+            if ($validatorException) {
+                $errors = [];
+                foreach($validatorException->getViolations() as $e) {
+                    $errors[$e->getPropertyPath()] = $e->getMessage();
+                }
+            }
         }
 
-        $response = new JsonResponse(
-            [
-                'meta' => [
-                    'success' => false,
-                    'message' => $message,
-                ],
+        $resData = [
+            'meta' => [
+                'success' => false,
+                'message' => $message,
             ],
-            $statusCode
-        );
+        ];
+        if($errors) {
+            $resData['meta']['errors'] = $errors;
+        }
 
-        $event->setResponse($response);
+        $event->setResponse(new JsonResponse($resData, $statusCode));
     }
 
     public static function getSubscribedEvents(): array {
