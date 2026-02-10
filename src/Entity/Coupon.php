@@ -1,5 +1,6 @@
 <?php namespace App\Entity;
 
+use App\Repository\CouponRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -7,7 +8,7 @@ use Doctrine\ORM\Mapping\Index;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: CouponRepository::class)]
 #[InheritanceType('SINGLE_TABLE')]
 #[DiscriminatorColumn(name: 'type', type: 'string')]
 #[DiscriminatorMap(['discount-fixed' => FixedDiscountCoupon::class, 'discount-percent' => PercentDiscountCoupon::class])]

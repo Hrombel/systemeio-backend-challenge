@@ -1,12 +1,12 @@
 <?php namespace App\Validator;
 
-use App\Service\Trade\Trade;
+use App\Repository\TaxRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 final class TaxNumberValidator extends ConstraintValidator {
     public function __construct(
-        private Trade $tax,
+        private TaxRepository $tax,
     ) {
     }
 
@@ -17,7 +17,10 @@ final class TaxNumberValidator extends ConstraintValidator {
             return;
         }
 
-        /** TODO: index by country code to simplify further matching */
+        /** 
+         * TODO: index by country code to simplify further matching
+         * TODO: add caching of returned array.
+         */
         $taxRules = $this->tax->getTaxRules();
 
         foreach ($taxRules as $rule) {

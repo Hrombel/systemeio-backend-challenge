@@ -16,7 +16,6 @@ class StripeTest extends KernelTestCase {
 
     #[DataProvider('converterProvider')]
     public function testConverter(string $price, float $expectedPrice): void {
-        self::bootKernel();
 
         $resultPrice = Stripe::convertPrice($price);
 

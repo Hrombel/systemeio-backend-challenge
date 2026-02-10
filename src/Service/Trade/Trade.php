@@ -18,43 +18,6 @@ class Trade {
     ) {
     }
 
-    public function couponExists(string $couponCode, int $sellerId): bool {
-
-        $couponFQN = DiscountCouponEntity::class;
-        return !!$this->em->createQuery(
-           "SELECT COUNT(c)
-            FROM $couponFQN c
-            WHERE
-                c.validUntil > CURRENT_TIMESTAMP() AND
-                c.code = :couponCode AND
-                c.sellerId = :sellerId
-        ")
-            ->setParameters([
-                'couponCode' => $couponCode,
-                'sellerId' => $sellerId,
-            ])
-            ->getSingleScalarResult()    
-        ;
-    }
-
-    /**
-     * TODO: add caching of returned array.
-     *
-     * @return string[]
-     * */
-    public function getTaxRules(): array {
-        $taxFQN = TaxEntity::class;
-
-        $rules = $this->em->createQuery(
-            "SELECT t.rule
-            FROM $taxFQN t
-        ")
-            ->getSingleColumnResult()
-        ;
-
-        return $rules;
-    }
-
     public function calculatePrice(int $productId, string $taxNumber, ?string $couponCode = null): string {
         $productFQN = ProductEntity::class;
         $taxFQN = TaxEntity::class;
@@ -110,7 +73,7 @@ class Trade {
             $couponArgs = [];
         }
 
-        $totalPrice = $this->calculateTotalItemPrice(
+        $totalPrice = self::calculateTotalItemPrice(
             $price,
             $taxValuePercent,
             ...$couponArgs,
@@ -119,8 +82,7 @@ class Trade {
         return $totalPrice;
     }
 
-    /** TODO: make static. */
-    public function calculateTotalItemPrice(
+    public static function calculateTotalItemPrice(
         string $itemPrice, int $taxValuePercent, ?string $couponExactValue = null, ?int $couponPercentValue = null,
     ): string {
         $totalPrice = $itemPrice;

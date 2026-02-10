@@ -1,14 +1,14 @@
 <?php namespace App\Validator;
 
 use App\Entity\Product as ProductEntity;
-use App\Service\Trade\Trade;
+use App\Repository\CouponRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 final class CouponCodeValidator extends ConstraintValidator {
     public function __construct(
-        private readonly Trade $trade,
+        private readonly CouponRepository $coupon,
         private readonly EntityManagerInterface $em,
     ) {
     }
@@ -32,7 +32,7 @@ final class CouponCodeValidator extends ConstraintValidator {
 
         $sellerId = $product->getSellerId();
 
-        if ($this->trade->couponExists($value, $sellerId)) {
+        if ($this->coupon->couponExists($value, $sellerId)) {
             return;
         }
 

@@ -4,7 +4,6 @@ use App\Service\Payment\System\Paypal;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-
 class PaypalTest extends KernelTestCase {
     public static function converterProvider(): array {
         return [
@@ -16,7 +15,6 @@ class PaypalTest extends KernelTestCase {
 
     #[DataProvider('converterProvider')]
     public function testConverter(string $price, int $expectedPrice): void {
-        self::bootKernel();
 
         $resultPrice = Paypal::convertPrice($price);
 

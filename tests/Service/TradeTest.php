@@ -19,10 +19,6 @@ class TradeTest extends KernelTestCase {
 
     #[DataProvider('calculateTotalItemPriceValidProvider')]
     public function testCalculateTotalItemPrice(string $productPrice, int $taxValuePercent, ?string $couponValue, string $resultPrice): void {
-        self::bootKernel();
-
-        /** @var Trade $trade */
-        $trade = static::getContainer()->get(Trade::class);
 
         $couponArgs = [];
         if (null !== $couponValue) {
@@ -33,7 +29,7 @@ class TradeTest extends KernelTestCase {
             }
         }
 
-        $totalPrice = $trade->calculateTotalItemPrice($productPrice, $taxValuePercent, ...$couponArgs);
+        $totalPrice = Trade::calculateTotalItemPrice($productPrice, $taxValuePercent, ...$couponArgs);
 
         $this->assertEquals($resultPrice, $totalPrice, 'Incorrect total price');
     }
