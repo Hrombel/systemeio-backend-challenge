@@ -1,6 +1,9 @@
 <?php namespace App\Controller;
 
+use App\Controller\DTO\ResponseDTO;
+use App\Controller\DTO\ResponseMetaDTO;
 use App\Controller\TradeController\DTO\CalculatePriceRequestDto;
+use App\Controller\TradeController\DTO\CalculatePriceResponseDataDto;
 use App\Controller\TradeController\DTO\PurchaseRequestDto;
 use App\Service\Payment\Gateway;
 use App\Service\Trade\Exception\TradeException;
@@ -23,12 +26,13 @@ final class TradeController extends AbstractController {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
-        return $this->json([
-            'meta' => [ 'success' => true ],
-            'data' => [
-                'totalPrice' => $totalPrice,
-            ]
-        ]);
+        /** @var ResponseDTO<CalculatePriceResponseDataDto> $response */
+        $response = new ResponseDTO(
+            meta: new ResponseMetaDTO(success: true),
+            data: new CalculatePriceResponseDataDto(totalPrice: $totalPrice),
+        );
+
+        return $this->json($response);
     }
 
     /**
@@ -49,8 +53,10 @@ final class TradeController extends AbstractController {
         $processor = $paymentGateway->getPaymentSystem($data->paymentProcessor);
         $processor->process($totalPrice);
 
-        return $this->json([
-            'meta' => [ 'success' => true ],
-        ]);
+        return $this->json(
+            new ResponseDTO(
+                new ResponseMetaDTO(success: true)
+            )
+        );
     }
 }
