@@ -32,13 +32,16 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
         if ($statusCode >= 500 && $isProd) {
             $message = 'Internal server error';
         } else {
-            $message = $exception->getMessage();
 
             if ($validatorException) {
+                $message = 'There is an error in your request. Check the "errors" field for extra info.';
                 $errors = [];
                 foreach ($validatorException->getViolations() as $e) {
                     $errors[$e->getPropertyPath()] = $e->getMessage();
                 }
+            }
+            else {
+                $message = $exception->getMessage();
             }
         }
 
