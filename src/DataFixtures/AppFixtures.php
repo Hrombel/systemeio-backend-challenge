@@ -29,6 +29,7 @@ class AppFixtures extends Fixture {
             ['P100', '%100'],
             ['F10',  '10.00'],
             ['F05',  '0.5'],
+            ['OLD',  '123.00', '-1 day'],
         ],
             $manager);
 
@@ -36,7 +37,10 @@ class AppFixtures extends Fixture {
     }
 
     private function addCoupons(array $values, ObjectManager $manager) {
-        $validUntil = new \DateTime();
+
+        $now = new \DateTime();
+
+        $validUntil = clone $now;
         $validUntil->add(\DateInterval::createFromDateString('1 year'));
         foreach ($values as $v) {
             $coupon = '%' === $v[1][0]
@@ -47,7 +51,13 @@ class AppFixtures extends Fixture {
 
             $coupon->setCode($v[0]);
             $coupon->setSellerId(1);
-            $coupon->setValidUntil(clone $validUntil);
+            if(isset($v[2])) {
+                $until = (clone $now)->add(\DateInterval::createFromDateString($v[2]));
+            }
+            else {
+                $until = clone $validUntil;
+            }
+            $coupon->setValidUntil($until);
 
             if ($coupon instanceof PercentDiscountCoupon) {
                 $coupon->setPercentValue((int) substr($v[1], 1));
