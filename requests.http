@@ -6,7 +6,14 @@ Content-Type: application/json
 {
   "product": 1,
   "taxNumber": "DE123456789",
-  "couponCode": "D15"
+  "couponCode": "P10"
+}
+
+RETURN 200
+
+{
+  "meta": { "success": true, "message": "null" },
+  "data": { "totalPrice": "107.10" }
 }
 
 ### Execute Purchase
@@ -17,6 +24,13 @@ Content-Type: application/json
 {
   "product": 1,
   "taxNumber": "IT12345678900",
-  "couponCode": "D15",
+  "couponCode": "P100",
   "paymentProcessor": "paypal"
+}
+
+RETURN 200
+
+{
+  "meta": { "success": true, "message": "null" },
+  "data": null
 }
