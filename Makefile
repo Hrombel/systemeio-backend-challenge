@@ -36,9 +36,12 @@ install: ## Install dependencies without running the whole application.
 	${DC_RUN} composer install
 
 database: ## Set up a database for dev and test environments
+	${DC_RUN} bin/console doctrine:database:drop --force --if-exists
+	${DC_RUN} bin/console doctrine:database:create --if-not-exists
 	${DC_RUN} bin/console doctrine:migrations:migrate --no-interaction
 	${DC_RUN} bin/console doctrine:fixtures:load --no-interaction
-	${DC_RUN} bin/console --env=test doctrine:database:create
+	${DC_RUN} bin/console --env=test doctrine:database:drop --force --if-exists
+	${DC_RUN} bin/console --env=test doctrine:database:create --if-not-exists
 	${DC_RUN} bin/console --env=test doctrine:migrations:migrate --no-interaction
 	${DC_RUN} bin/console --env=test doctrine:fixtures:load --no-interaction
 
