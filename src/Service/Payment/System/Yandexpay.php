@@ -11,7 +11,11 @@ class Yandexpay extends PaymentSystem {
         throw new NotImplementedException('The Method is not implemented');
     }
 
-    public function process(string $totalPrice) {
+    public function process(string $totalPrice): mixed {
+        throw new NotImplementedException('The Method is not implemented');
+    }
+
+    public static function convertPrice(string $price): mixed {
         throw new NotImplementedException('The Method is not implemented');
     }
 }

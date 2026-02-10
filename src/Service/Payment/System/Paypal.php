@@ -11,11 +11,17 @@ class Paypal extends PaymentSystem {
         $this->processor = new PaypalPaymentProcessor();
     }
 
-    public function process(string $totalPrice) {
+    public function process(string $totalPrice): int {
         try {
-            $this->processor->pay(intval(floatval($totalPrice) * 100));
+            $value = self::convertPrice($totalPrice);
+            $this->processor->pay($value);
+            return $value;
         } catch (\Throwable $e) {
             throw new ProcessException('Error processing this request', 1, $e);
         }
+    }
+
+    public static function convertPrice(string $price): int {
+        return intval(floatval($price) * 100);
     }
 }
