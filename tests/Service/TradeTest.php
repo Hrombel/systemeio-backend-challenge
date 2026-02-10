@@ -6,7 +6,6 @@ use App\Service\Trade\Exception\UnrecognizedTaxTradeException;
 use App\Service\Trade\Trade;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Throwable;
 
 /**
  * TODO: Add invalid test cases.
@@ -37,7 +36,6 @@ class TradeTest extends KernelTestCase {
 
     #[DataProvider('calculateTotalItemPriceValidProvider')]
     public function testCalculateTotalItemPrice(string $productPrice, int $taxValuePercent, ?string $couponValue, string $resultPrice): void {
-
         $couponArgs = [];
         if (null !== $couponValue) {
             if ('%' === substr($couponValue, -1, 1)) {
@@ -62,9 +60,8 @@ class TradeTest extends KernelTestCase {
         try {
             $totalPrice = $trade->calculatePrice($productId, $taxNumber, $couponCode);
             $this->assertEquals($expectedPrice, $totalPrice, 'Incorrect total price');
-        }
-        catch(Throwable $e) {
-            if(!$expectedException) {
+        } catch (\Throwable $e) {
+            if (!$expectedException) {
                 throw $e;
             }
 

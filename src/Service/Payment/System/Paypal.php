@@ -15,6 +15,7 @@ class Paypal extends PaymentSystem {
         try {
             $value = self::convertPrice($totalPrice);
             $this->processor->pay($value);
+
             return $value;
         } catch (\Throwable $e) {
             throw new ProcessException('Error processing this request', 1, $e);

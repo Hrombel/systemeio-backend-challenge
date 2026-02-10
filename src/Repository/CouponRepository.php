@@ -14,9 +14,9 @@ class CouponRepository extends ServiceEntityRepository {
     }
 
     public function couponExists(string $couponCode, int $sellerId): bool {
-
         $couponFQN = DiscountCoupon::class;
-        return !!$this->getEntityManager()->createQuery(
+
+        return (bool) $this->getEntityManager()->createQuery(
             "SELECT COUNT(c)
                 FROM $couponFQN c
                 WHERE
@@ -28,7 +28,7 @@ class CouponRepository extends ServiceEntityRepository {
                     'couponCode' => $couponCode,
                     'sellerId' => $sellerId,
                 ])
-            ->getSingleScalarResult()    
+            ->getSingleScalarResult()
         ;
     }
 }

@@ -2,14 +2,13 @@
 
 use Symfony\Component\Validator\Constraint;
 
-#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 final class PayProcessor extends Constraint {
     public string $message = 'The type "{{ value }}" does not represent payment system processor.';
 
     // You can use #[HasNamedArguments] to make some constraint options required.
     // All configurable options must be passed to the constructor.
     public function __construct(
-        public string $mode = 'strict',
         ?array $groups = null,
         mixed $payload = null,
     ) {

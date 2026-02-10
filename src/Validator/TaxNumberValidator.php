@@ -17,7 +17,7 @@ final class TaxNumberValidator extends ConstraintValidator {
             return;
         }
 
-        /** 
+        /**
          * TODO: index by country code to simplify further matching
          * TODO: add caching of returned array.
          */

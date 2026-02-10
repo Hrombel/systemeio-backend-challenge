@@ -5,5 +5,5 @@ interface PaymentSystemInterface {
 
     public function getType(): string;
 
-    static function convertPrice(string $price): mixed;
+    public static function convertPrice(string $price): mixed;
 }

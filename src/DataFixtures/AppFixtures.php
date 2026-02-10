@@ -37,7 +37,6 @@ class AppFixtures extends Fixture {
     }
 
     private function addCoupons(array $values, ObjectManager $manager) {
-
         $now = new \DateTime();
 
         $validUntil = clone $now;
@@ -51,10 +50,9 @@ class AppFixtures extends Fixture {
 
             $coupon->setCode($v[0]);
             $coupon->setSellerId(1);
-            if(isset($v[2])) {
+            if (isset($v[2])) {
                 $until = (clone $now)->add(\DateInterval::createFromDateString($v[2]));
-            }
-            else {
+            } else {
                 $until = clone $validUntil;
             }
             $coupon->setValidUntil($until);

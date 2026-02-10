@@ -36,7 +36,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
 
             if ($validatorException) {
                 $errors = [];
-                foreach($validatorException->getViolations() as $e) {
+                foreach ($validatorException->getViolations() as $e) {
                     $errors[$e->getPropertyPath()] = $e->getMessage();
                 }
             }
@@ -48,7 +48,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
                 'message' => $message,
             ],
         ];
-        if($errors) {
+        if ($errors) {
             $resData['meta']['errors'] = $errors;
         }
 

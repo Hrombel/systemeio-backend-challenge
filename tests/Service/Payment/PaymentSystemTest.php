@@ -4,13 +4,12 @@ use App\Service\Payment\Gateway;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-
 class PaymentSystemTest extends KernelTestCase {
     public static function paymentSystemPriceConsistencyProvider(): array {
         return [
-            [ '100.00'],
-            [ '150.00'],
-            [ '999.00'],
+            ['100.00'],
+            ['150.00'],
+            ['999.00'],
         ];
     }
 
@@ -21,7 +20,7 @@ class PaymentSystemTest extends KernelTestCase {
         /** @var Gateway $gw */
         $gw = static::getContainer()->get(Gateway::class);
 
-        foreach($gw->getPaySystemTypes() as $type) {
+        foreach ($gw->getPaySystemTypes() as $type) {
             $ps = $gw->getPaymentSystem($type);
 
             $convertedPrice = $ps::convertPrice($price);
