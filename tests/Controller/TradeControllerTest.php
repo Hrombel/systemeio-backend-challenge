@@ -45,12 +45,18 @@ class TradeControllerTest extends WebTestCase {
         );
 
         $this->assertResponseStatusCodeSame($expectedCode);
+        $content = $client->getResponse()->getContent() ?: '';
+        $this->assertJson($content);
 
-        if ($expectedCode >= 200 && $expectedCode < 300) {
-            $response = json_decode($client->getResponse()->getContent(), true);
-            $this->assertArrayHasKey('totalPrice', $response);
+        $success = $expectedCode >= 200 && $expectedCode < 300;
+        $data = json_decode($content, true);
 
-            $this->assertEquals($expectedPrice, $response['totalPrice'], 'Invalid total price');
+        $this->assertSame($success, $data['meta']['success']);
+        if($success) {
+            $this->assertSame($expectedPrice, $data['data']['totalPrice']);
+        }
+        else {
+            $this->assertArrayHasKey('message', $data['meta']);
         }
     }
 
@@ -72,5 +78,16 @@ class TradeControllerTest extends WebTestCase {
         );
 
         $this->assertResponseStatusCodeSame($expectedCode);
+        $content = $client->getResponse()->getContent() ?: '';
+        $this->assertJson($content);
+
+        $success = $expectedCode >= 200 && $expectedCode < 300;
+        $data = json_decode($content, true);
+
+        $this->assertSame($success, $data['meta']['success']);
+
+        if(!$success) {
+            $this->assertArrayHasKey('message', $data['meta']);
+        }
     }
 }

@@ -24,10 +24,16 @@ final class TradeController extends AbstractController {
         }
 
         return $this->json([
-            'totalPrice' => $totalPrice,
+            'meta' => [ 'success' => true ],
+            'data' => [
+                'totalPrice' => $totalPrice,
+            ]
         ]);
     }
 
+    /**
+     * TODO: Limit coupon usage with usage quantity field
+     */
     #[Route('/purchase', name: 'app_trade_purchase', methods: 'POST')]
     public function purchase(
         #[MapRequestPayload] PurchaseRequestDto $data,
@@ -44,7 +50,7 @@ final class TradeController extends AbstractController {
         $processor->process($totalPrice);
 
         return $this->json([
-            'message' => 'OK',
+            'meta' => [ 'success' => true ],
         ]);
     }
 }
