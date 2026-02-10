@@ -21,3 +21,8 @@ services:
       - "54320:5432"
     volumes:
       - ./mounts/postgresql-db:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"] # Command to run the health check
+      interval: 1s
+      timeout: 5s
+      retries: 10

@@ -10,13 +10,13 @@ PHONY: help
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-init: down build install up success-message console ## Initialize environment
+init: down build install up database success-message console ## Initialize environment
 
 build: ## Build services.
 	${DC} build $(c)
 
 up: ## Create and start services.
-	${DC} up -d $(c)
+	${DC} up -d --wait $(c)
 
 stop: ## Stop services.
 	${DC} stop $(c)
@@ -34,6 +34,13 @@ console: ## Login in console.
 
 install: ## Install dependencies without running the whole application.
 	${DC_RUN} composer install
+
+database: ## Set up a database for dev and test environments
+	${DC_RUN} bin/console doctrine:migrations:migrate --no-interaction
+	${DC_RUN} bin/console doctrine:fixtures:load --no-interaction
+	${DC_RUN} bin/console --env=test doctrine:database:create
+	${DC_RUN} bin/console --env=test doctrine:migrations:migrate --no-interaction
+	${DC_RUN} bin/console --env=test doctrine:fixtures:load --no-interaction
 
 success-message:
 	@echo "You can now access the application at http://localhost:8337"
