@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\Attribute\TaggedLocator;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class Gateway {
-
     private ?array $fqnByType = null;
 
     public function __construct(
@@ -29,13 +28,13 @@ class Gateway {
     }
 
     /**
-     * TODO: add a caching method
+     * TODO: add a caching method.
      */
     private function byType(): array {
-        if($this->fqnByType === null) {
+        if (null === $this->fqnByType) {
             $this->fqnByType = [];
             $items = $this->locator->getProvidedServices();
-            foreach($items as $id => $fqn) {
+            foreach ($items as $id => $fqn) {
                 /** @var PaymentSystemInterface $ps */
                 $ps = $this->locator->get($id);
                 $this->fqnByType[$ps->getType()] = $fqn;

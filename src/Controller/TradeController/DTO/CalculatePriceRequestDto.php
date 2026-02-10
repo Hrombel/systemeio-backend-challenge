@@ -3,7 +3,6 @@
 class CalculatePriceRequestDto {
     use ProductDealTrait;
 
-
     public function __construct(
         int $product,
         string $taxNumber,

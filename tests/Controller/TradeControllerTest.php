@@ -53,10 +53,9 @@ class TradeControllerTest extends WebTestCase {
         $data = json_decode($content, true);
 
         $this->assertSame($success, $data['meta']['success']);
-        if($success) {
+        if ($success) {
             $this->assertSame($expectedPrice, $data['data']['totalPrice']);
-        }
-        else {
+        } else {
             $this->assertArrayHasKey('message', $data['meta']);
         }
     }
@@ -87,7 +86,7 @@ class TradeControllerTest extends WebTestCase {
 
         $this->assertSame($success, $data['meta']['success']);
 
-        if(!$success) {
+        if (!$success) {
             $this->assertArrayHasKey('message', $data['meta']);
         }
     }

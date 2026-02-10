@@ -36,7 +36,7 @@ final class TradeController extends AbstractController {
     }
 
     /**
-     * TODO: Limit coupon usage with usage quantity field
+     * TODO: Limit coupon usage with usage quantity field.
      */
     #[Route('/purchase', name: 'app_trade_purchase', methods: 'POST')]
     public function purchase(

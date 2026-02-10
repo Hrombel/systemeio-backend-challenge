@@ -1,17 +1,15 @@
 <?php namespace App\Validator;
 
+use App\Entity\Product as ProductEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use App\Entity\Product as ProductEntity;
 
 final class ProductIdValidator extends ConstraintValidator {
-    
     public function __construct(
         private readonly EntityManagerInterface $em,
     ) {
     }
-
 
     public function validate(mixed $value, Constraint $constraint): void {
         /* @var Product $constraint */
@@ -19,10 +17,10 @@ final class ProductIdValidator extends ConstraintValidator {
         if (null === $value || '' === $value) {
             return;
         }
-        
+
         /** @var ProductEntity $product */
         $product = $this->em->find(ProductEntity::class, $value);
-        if($product) {
+        if ($product) {
             return;
         }
 

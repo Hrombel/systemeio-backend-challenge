@@ -5,11 +5,10 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 final class TaxNumberValidator extends ConstraintValidator {
-
-
     public function __construct(
         private Trade $tax,
-    ) { }
+    ) {
+    }
 
     public function validate(mixed $value, Constraint $constraint): void {
         /* @var TaxNumber $constraint */
@@ -21,12 +20,11 @@ final class TaxNumberValidator extends ConstraintValidator {
         /** TODO: index by country code to simplify further matching */
         $taxRules = $this->tax->getTaxRules();
 
-        foreach($taxRules as $rule) {
-            if(preg_match("/^$rule$/", $value) === 1) {
+        foreach ($taxRules as $rule) {
+            if (1 === preg_match("/^$rule$/", $value)) {
                 return;
             }
         }
-        
 
         // TODO: implement the validation here
         $this->context->buildViolation($constraint->message)

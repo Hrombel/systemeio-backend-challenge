@@ -5,7 +5,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 final class PayProcessorValidator extends ConstraintValidator {
-    
     public function __construct(
         private readonly Gateway $paySystem,
     ) {
@@ -19,7 +18,7 @@ final class PayProcessorValidator extends ConstraintValidator {
         }
 
         $types = $this->paySystem->getPaySystemTypes();
-        if(in_array($value, $types)) {
+        if (in_array($value, $types)) {
             return;
         }
 

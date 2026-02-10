@@ -8,33 +8,29 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface {
-
     public function __construct(
         private readonly KernelInterface $kernel,
     ) {
     }
 
     public function onExceptionEvent(ExceptionEvent $event): void {
-        
         $exception = $event->getThrowable();
         $validatorException = null;
 
         $statusCode = 500;
-        if($exception instanceof HttpExceptionInterface) {
+        if ($exception instanceof HttpExceptionInterface) {
             $statusCode = $exception->getStatusCode();
-            if($exception->getPrevious() instanceof ValidationFailedException) {
+            if ($exception->getPrevious() instanceof ValidationFailedException) {
                 $validatorException = $exception->getPrevious();
             }
         }
-        /** @var null|ValidationFailedException $validatorException */
+        /** @var ValidationFailedException|null $validatorException */
+        $isProd = 'prod' === $this->kernel->getEnvironment();
 
-        $isProd = $this->kernel->getEnvironment() === 'prod';
-
-        if($statusCode >= 500 && $isProd) {
+        if ($statusCode >= 500 && $isProd) {
             $message = 'Internal server error';
-        }
-        else if($validatorException) {
-            # TODO: Make errors presented in real response array structure
+        } elseif ($validatorException) {
+            // TODO: Make errors presented in real response array structure
             $message = implode(
                 "\n",
                 array_map(
@@ -46,8 +42,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface {
                     iterator_to_array($validatorException->getViolations())
                 )
             );
-        }
-        else {
+        } else {
             $message = $exception->getMessage();
         }
 

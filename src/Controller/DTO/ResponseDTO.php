@@ -4,7 +4,6 @@
  * @template T of object
  */
 class ResponseDTO {
-
     /**
      * @param T $data
      */
