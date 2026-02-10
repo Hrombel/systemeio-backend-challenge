@@ -5,6 +5,7 @@ use App\Controller\DTO\ResponseMetaDTO;
 use App\Controller\TradeController\DTO\CalculatePriceRequestDto;
 use App\Controller\TradeController\DTO\CalculatePriceResponseDataDto;
 use App\Controller\TradeController\DTO\PurchaseRequestDto;
+use App\Service\Payment\Exception\ProcessException;
 use App\Service\Payment\Gateway;
 use App\Service\Trade\Exception\TradeException;
 use App\Service\Trade\Trade;
@@ -50,8 +51,12 @@ final class TradeController extends AbstractController {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
-        $processor = $paymentGateway->getPaymentSystem($data->paymentProcessor);
-        $processor->process($totalPrice);
+        try {
+            $processor = $paymentGateway->getPaymentSystem($data->paymentProcessor);
+            $processor->process($totalPrice);
+        } catch (ProcessException $e) {
+            throw new BadRequestHttpException($e->getMessage(), $e);
+        }
 
         return $this->json(
             new ResponseDTO(
