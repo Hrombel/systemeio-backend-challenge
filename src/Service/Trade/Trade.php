@@ -18,6 +18,25 @@ class Trade {
     ) {
     }
 
+    public function couponExists(string $couponCode, int $sellerId): bool {
+
+        $couponFQN = DiscountCouponEntity::class;
+        return !!$this->em->createQuery(
+           "SELECT COUNT(c)
+            FROM $couponFQN c
+            WHERE
+                c.validUntil > CURRENT_TIMESTAMP() AND
+                c.code = :couponCode AND
+                c.sellerId = :sellerId
+        ")
+            ->setParameters([
+                'couponCode' => $couponCode,
+                'sellerId' => $sellerId,
+            ])
+            ->getSingleScalarResult()    
+        ;
+    }
+
     /**
      * TODO: add caching of returned array.
      *
@@ -100,6 +119,7 @@ class Trade {
         return $totalPrice;
     }
 
+    /** TODO: make static. */
     public function calculateTotalItemPrice(
         string $itemPrice, int $taxValuePercent, ?string $couponExactValue = null, ?int $couponPercentValue = null,
     ): string {

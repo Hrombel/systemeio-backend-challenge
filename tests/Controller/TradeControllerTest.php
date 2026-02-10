@@ -12,7 +12,7 @@ class TradeControllerTest extends WebTestCase {
 
             // invalid
             [1, 'DE1234567890', 'P10',  422],
-            [1, 'DE123456789',  'P123', 400], // TODO: make a validator to be 422
+            [1, 'DE123456789',  'P123', 422],
         ];
     }
 
@@ -22,6 +22,7 @@ class TradeControllerTest extends WebTestCase {
             [2, 'IT12345678900', 'P100', 'paypal',    200],
             [1, 'IT12345678900', null, 'stripe',    200],
             // invalid
+            [2, 'IT12345678900', 'INVALID', 'paypal',    422],
             [2, 'IT12345678900', 'P100', 'PayPal',    422],
             [2, 'IT12345678900', 'P100', 'yandexpay', 422],
         ];
